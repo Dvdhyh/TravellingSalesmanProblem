@@ -1,0 +1,7 @@
+﻿  main.cpp
+c:\users\davidhuynh\documents\visual studio 2015\projects\travellingsalesmanproblem\travellingsalesmanproblem\main.cpp(210): warning C4065: switch statement contains 'default' but no 'case' labels
+  TSPGeneticAlgorithm.cpp
+c:\users\davidhuynh\documents\visual studio 2015\projects\travellingsalesmanproblem\travellingsalesmanproblem\tspgeneticalgorithm.cpp(4): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  PaintScreen.cpp
+  Generating Code...
+  TravellingSalesmanProblem.vcxproj -> c:\users\davidhuynh\documents\visual studio 2015\Projects\TravellingSalesmanProblem\Debug\TravellingSalesmanProblem.exe
