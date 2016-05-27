@@ -1,10 +1,8 @@
 #include "AllHeaderFiles.h"
-#include <chrono>
 
-typedef std::chrono::high_resolution_clock Clock;
-
-std::vector<AddEditButtons>MYEDITS;
-std::vector<AddPushButtons>MYPUSHS;
+//Just timing how long it takes per cycles
+//#include <chrono>
+//typedef std::chrono::high_resolution_clock Clock;
 
 GdiplusStartupInput gdiplusStartupInput;
 ULONG_PTR           gdiplusToken;
