@@ -18,6 +18,10 @@ struct TheEngine {
 
 	void DisplayOnScreen(HDC hdc);
 
+	void DrawButtonControls(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY);
+
+	void DrawValues(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY);
+
 	void DrawCoordinates(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY, std::map<int, std::pair<int, int>>& _mymap);
 
 	void DrawScoreboard(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY, int _Score, int _Generation);

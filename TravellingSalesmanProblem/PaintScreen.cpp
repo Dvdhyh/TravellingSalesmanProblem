@@ -15,10 +15,13 @@ void TheEngine::DisplayOnScreen(HDC hdc) {
 	FontFamily fontFamily(L"Times New Roman");
 	Font font(&fontFamily, 16, FontStyleRegular, UnitPixel);
 
+	DrawButtonControls(theGraphics1, brush, fontFamily, font, 40, 510);
+	DrawValues(theGraphics1, brush, fontFamily, font, 10, 510);
+
 	if (bRandomButtonClicked) {
 		//Current
-		DrawCoordinates(theGraphics1, brush, fontFamily, font, 150, 510, _GA.mymap);
-		DrawScoreboard(theGraphics1, brush, fontFamily, font, 250, 510, _GA.iScore, _GA.iGeneration);
+		DrawCoordinates(theGraphics1, brush, fontFamily, font, 200, 510, _GA.mymap);
+		DrawScoreboard(theGraphics1, brush, fontFamily, font, 300, 510, _GA.iScore, _GA.iGeneration);
 		DrawCircles(theGraphics1, thePenBlue, _diameter, 0);
 
 		//Best 
@@ -34,6 +37,47 @@ void TheEngine::DisplayOnScreen(HDC hdc) {
 		//Draw lines for best fitness so far
 		DrawConnectLines(theGraphics1, thePenRed, _radius, displayOffset, _GA.mymap, _GA._BestString);
 	}
+}
+
+void TheEngine::DrawButtonControls(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY) {
+
+	PointF pointA(0.0f + _offsetX, 0.0f + _offsetY);
+	PointF pointZ(0.0f, 20.0f);
+
+	theGraphics1.DrawString(L"T - Pop size -", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	theGraphics1.DrawString(L"Y - Pop size +", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	theGraphics1.DrawString(L"G - Mutation Rate -", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	theGraphics1.DrawString(L"H - Mutation Rate +", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	theGraphics1.DrawString(L"B - Cities -", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	theGraphics1.DrawString(L"N - Cities +", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	pointA = pointA + pointZ;
+	theGraphics1.DrawString(L"R - Reset & Create", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	theGraphics1.DrawString(L"Enter - Start/Stop", -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+}
+
+void TheEngine::DrawValues(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY) {
+	WCHAR tempCoord[10] = { 0 };
+
+	PointF pointA(0.0f + _offsetX, 0.0f + _offsetY);
+	PointF pointZ(0.0f, 20.0f);
+
+	wsprintf(tempCoord, L"%i", _GA.iPopulation);
+	theGraphics1.DrawString(tempCoord, -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	wsprintf(tempCoord, L"%i", _GA.iMutateRate);
+	theGraphics1.DrawString(tempCoord, -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
+	wsprintf(tempCoord, L"%i", _GA.iPoints);
+	theGraphics1.DrawString(tempCoord, -1, &_font, pointA, &_brush);
+	pointA = pointA + pointZ;
 }
 
 void TheEngine::DrawCoordinates(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY, std::map<int, std::pair<int, int>>& _mymap) {

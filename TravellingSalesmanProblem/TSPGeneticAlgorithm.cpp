@@ -7,6 +7,7 @@ GeneAl::GeneAl() : mtt(std::time(0)) {
 	iGeneration = 0;
 	iScore = 0;
 	iHighScore = 100000;
+	iPoints = 7;
 }
 
 //////////////////// STARTING POPULATION ///////////////////////////////////////
@@ -168,9 +169,6 @@ void GeneAl::CreateOffspring() {
 void GeneAl::Clear() {
 	myCacheScoreMap.clear();
 	myFitnessScores.clear();
-	iPopulation = 100;
-	iMutateRate = 1;
-	iPoints = 7;
 	iGeneration = 0;
 	iScore = 0;
 	iHighScore = 9999999;

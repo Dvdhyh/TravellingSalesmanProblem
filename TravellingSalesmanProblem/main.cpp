@@ -1,6 +1,4 @@
 #include "AllHeaderFiles.h"
-#include "C:\Users\DavidHuynh\Documents\Visual Studio 2015\MyHeaders\GUI.h"
-
 #include <chrono>
 
 typedef std::chrono::high_resolution_clock Clock;
@@ -75,21 +73,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		_Engine.iAppState = NotReady;
 
-		int _LayoutY = 500;
-
-		MYEDITS.emplace_back(AddEditButtons());
-		MYEDITS.emplace_back(AddEditButtons());
-		MYEDITS.emplace_back(AddEditButtons());
-		MYEDITS[0].CreateGUI(hWnd, 10, _LayoutY + 10, 60, 30, L"100");
-		MYEDITS[1].CreateGUI(hWnd, 10, _LayoutY + 50, 60, 30, L"1");
-		MYEDITS[2].CreateGUI(hWnd, 10, _LayoutY + 90, 60, 30, L"7");
-
-
-		MYPUSHS.emplace_back(AddPushButtons());
-		MYPUSHS.emplace_back(AddPushButtons());
-		MYPUSHS[0].CreateGUI(hWnd, 10, _LayoutY + 130, 60, 30, L"Random");
-		MYPUSHS[1].CreateGUI(hWnd, 10, _LayoutY + 170, 120, 30, L"Start/Pause");
-
 		SetTimer(hWnd, 9003, NULL, NULL);
 		SetTimer(hWnd, 9004, 1000, NULL);
 
@@ -140,68 +123,91 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		break;
 	}
+	case WM_KEYDOWN: {
+		switch (wParam) {
+		case 'R':{
+			//Clearing all data and setting states to default
+			_Engine._GA.Clear();
+
+			for (int a = 0; a < _Engine._GA.iPoints; a++)
+				_Engine._GA._temp.emplace_back(a);
+
+			_Engine._GA.RandomPointSet();
+			_Engine.bRandomButtonClicked = true;
+			_Engine.bSSButtonFirstClicked = false;
+			_Engine.bResume = false;
+			_Engine._GA.bUpdateHScores = false;
+			_Engine.iAppState = Pause;
+
+			if (_Engine._GA.iPopulation == NULL || _Engine._GA.iPopulation < 1) {
+				_Engine.iAppState = NotReady;
+				::MessageBox(NULL, L"Population must be above 1", L"Error", NULL);
+			}
+			if (_Engine._GA.iMutateRate == NULL || _Engine._GA.iMutateRate < 1) {
+				_Engine.iAppState = NotReady;
+				::MessageBox(NULL, L"Mutation rate must be above 0", L"Error", NULL);
+			}
+			if (_Engine._GA.iPoints == NULL || _Engine._GA.iPoints < 3) {
+				_Engine.iAppState = NotReady;
+				::MessageBox(NULL, L"Number of Points must be above 3", L"Error", NULL);
+			}
+			break;
+		}
+		case 'T':{
+			_Engine._GA.iPopulation--;
+			break;
+		}
+		case 'Y':{
+			_Engine._GA.iPopulation++;
+			break;
+		}
+		case 'G':{
+			_Engine._GA.iMutateRate--;
+			break;
+		}
+		case 'H':{
+			_Engine._GA.iMutateRate++;
+			break;
+		}
+		case 'B':{
+			_Engine._GA.iPoints--;
+			break;
+		}
+		case 'N':{
+			_Engine._GA.iPoints++;
+			break;
+		}
+		case VK_RETURN:{
+			// The Start/Stop button was clicked
+			if (_Engine.iAppState == NotReady)
+				break;
+
+			if (_Engine.bResume == false) {
+				_Engine._GA.CreatePopulation();
+				_Engine.bResume = true;
+			}
+
+
+			if (_Engine.iAppState == Active) {
+				_Engine.iAppState = Pause;
+			}
+			else {
+				_Engine.bSSButtonFirstClicked = true;
+
+				_Engine.iAppState = Active;
+			}
+			break;
+		}
+		}
+
+		InvalidateRect(hWnd, NULL, true);
+
+		break;
+	}
 	case WM_COMMAND: {
 		int wmId = LOWORD(wParam);
 		int wmEvent = HIWORD(wParam);
 		// Parse the menu selections:
-
-		if (wmEvent == BN_CLICKED) {
-			if (wmId == MYPUSHS[0].gLabelID) {
-				//Random Button was clicked
-
-				//Clearing all data and setting states to default
-				_Engine._GA.Clear();
-
-				_Engine._GA.iPopulation = MYEDITS[0].GetInt();
-				_Engine._GA.iMutateRate = MYEDITS[1].GetInt();
-				_Engine._GA.iPoints = MYEDITS[2].GetInt();
-
-				for (int a = 0; a < _Engine._GA.iPoints; a++)
-					_Engine._GA._temp.emplace_back(a);
-
-				_Engine._GA.RandomPointSet();
-				_Engine.bRandomButtonClicked = true;
-				_Engine.bSSButtonFirstClicked = false;
-				_Engine.bResume = false;
-				_Engine._GA.bUpdateHScores = false;
-				_Engine.iAppState = Pause;
-
-				if (_Engine._GA.iPopulation == NULL || _Engine._GA.iPopulation < 1) {
-					_Engine.iAppState = NotReady;
-					::MessageBox(NULL, L"Population must be above 1", L"Error", NULL);
-				}
-				if (_Engine._GA.iMutateRate == NULL || _Engine._GA.iMutateRate < 1) {
-					_Engine.iAppState = NotReady;
-					::MessageBox(NULL, L"Mutation rate must be above 0", L"Error", NULL);
-				}
-				if (_Engine._GA.iPoints == NULL || _Engine._GA.iPoints < 3) {
-					_Engine.iAppState = NotReady;
-					::MessageBox(NULL, L"Number of Points must be above 3", L"Error", NULL);
-				}
-			}
-			else if (wmId == MYPUSHS[1].gLabelID) {
-				// The Start/Stop button was clicked
-				if (_Engine.iAppState == NotReady)
-					break;
-
-				if (_Engine.bResume == false) {
-					_Engine._GA.CreatePopulation();
-					_Engine.bResume = true;
-				}
-
-				if (_Engine.iAppState == Active) {
-					_Engine.iAppState = Pause;
-				}
-				else {
-					_Engine.bSSButtonFirstClicked = true;
-
-					_Engine.iAppState = Active;
-				}
-
-			}
-
-			InvalidateRect(hWnd, NULL, true);
-		}
 
 		switch (wmId)
 		{
