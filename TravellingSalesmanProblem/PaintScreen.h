@@ -16,7 +16,7 @@ struct TheEngine {
 
 	GeneAl _GA;
 
-	void DisplayOnScreen(HDC hdc);
+	void DisplayOnScreen(HDC hdc, RECT _rect);
 
 	void DrawButtonControls(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY);
 

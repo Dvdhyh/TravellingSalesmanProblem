@@ -4,10 +4,33 @@
 //#include <chrono>
 //typedef std::chrono::high_resolution_clock Clock;
 
-GdiplusStartupInput gdiplusStartupInput;
-ULONG_PTR           gdiplusToken;
 
-TheEngine _Engine;
+
+void func(TheEngine& _Engine) {
+	_Engine._GA.Clear();
+
+	for (int a = 0; a < _Engine._GA.iPoints; a++)
+		_Engine._GA.vec_temp.emplace_back(a);
+
+	_Engine._GA.RandomPointSet();
+	_Engine.bSSButtonFirstClicked = false;
+	_Engine.bResume = false;
+	_Engine._GA.bUpdateHScores = false;
+	_Engine.iAppState = Pause;
+
+	if (_Engine._GA.iPopulation <= 0) {
+		_Engine.iAppState = NotReady;
+		::MessageBox(NULL, L"Population must be above 1", L"Invalid Value Error", NULL);
+	}
+	if (_Engine._GA.iMutateRate <= -1) {
+		_Engine.iAppState = NotReady;
+		::MessageBox(NULL, L"Mutation rate must be 0 or above", L"Invalid Value Error", NULL);
+	}
+	if (_Engine._GA.iPoints <= 2) {
+		_Engine.iAppState = NotReady;
+		::MessageBox(NULL, L"Number of Points must be 3 or above", L"Invalid Value Error", NULL);
+	}
+}
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -65,9 +88,16 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static TheEngine _Engine;
+	static GdiplusStartupInput gdiplusStartupInput;
+	static ULONG_PTR           gdiplusToken;
+	static RECT clientRect;
+
 	switch (message) {
 	case WM_CREATE: {
 		MoveWindow(hWnd, 0, 0, 900, 800, false);
+
+		GetClientRect(hWnd, &clientRect);
 
 		_Engine.iAppState = NotReady;
 
@@ -78,6 +108,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		break;
 	}
+	case WM_SIZE:
+		GetClientRect(hWnd, &clientRect);
+		break;
 	case WM_TIMER: {
 		switch (wParam) {
 		case 9003:
@@ -107,10 +140,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		case 9004:  // 1000 ms
-
-			if (_Engine.iAppState == Active) {
-				InvalidateRect(hWnd, NULL, true);
-			}
+			if (_Engine.iAppState == Active) 
+				InvalidateRect(hWnd, NULL, false);
 
 			break;
 		default:
@@ -123,54 +154,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 		case 'R':{
 			//Clearing all data and setting states to default
-			_Engine._GA.Clear();
-
-			for (int a = 0; a < _Engine._GA.iPoints; a++)
-				_Engine._GA.vec_temp.emplace_back(a);
-
-			_Engine._GA.RandomPointSet();
+			func(_Engine);
 			_Engine.bRandomButtonClicked = true;
-			_Engine.bSSButtonFirstClicked = false;
-			_Engine.bResume = false;
-			_Engine._GA.bUpdateHScores = false;
-			_Engine.iAppState = Pause;
-
-			if (_Engine._GA.iPopulation <= 0) {
-				_Engine.iAppState = NotReady;
-				::MessageBox(NULL, L"Population must be above 1", L"Invalid Value Error", NULL);
-			}
-			if (_Engine._GA.iMutateRate <= -1) {
-				_Engine.iAppState = NotReady;
-				::MessageBox(NULL, L"Mutation rate must be 0 or above", L"Invalid Value Error", NULL);
-			}
-			if (_Engine._GA.iPoints <= 2) {
-				_Engine.iAppState = NotReady;
-				::MessageBox(NULL, L"Number of Points must be 3 or above", L"Invalid Value Error", NULL);
-			}
 			break;
 		}
 		case 'T':{
 			_Engine._GA.iPopulation--;
+			func(_Engine);
+			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'Y':{
 			_Engine._GA.iPopulation++;
+			func(_Engine);
+			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'G':{
 			_Engine._GA.iMutateRate--;
+			func(_Engine);
+			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'H':{
 			_Engine._GA.iMutateRate++;
+			func(_Engine);
+			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'B':{
 			_Engine._GA.iPoints--;
+			func(_Engine);
+			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'N':{
 			_Engine._GA.iPoints++;
+			func(_Engine);
+			_Engine.iAppState = NotReady;
 			break;
 		}
 		case VK_RETURN:{
@@ -217,7 +238,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code that uses hdc here...
-		_Engine.DisplayOnScreen(hdc);
+		_Engine.DisplayOnScreen(hdc, clientRect);
 
 		EndPaint(hWnd, &ps);
 	}

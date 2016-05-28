@@ -241,11 +241,15 @@ void GeneAl::CreateOffspring() {
 
 void GeneAl::Clear() {
 	myCacheScoreMap.clear();
+	myCurrentMap.clear();
+	BestMapSoFar.clear();
 	vec_MyFitnessScores.clear();
+	vec_BestVector.clear();
+	vec_BestVectorThisGen.clear();
+	vec_temp.clear();
+
 	iGeneration = 0;
 	iThisGenBestScore = 0;
 	iBestScore = 9999999;
-	BestMapSoFar.clear();
-	vec_BestVector.clear();
-	vec_temp.clear();
+
 };

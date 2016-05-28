@@ -2,8 +2,18 @@
 
 TheEngine::TheEngine() {}
 
-void TheEngine::DisplayOnScreen(HDC hdc) {
-	Graphics theGraphics1(hdc);
+void TheEngine::DisplayOnScreen(HDC hdc, RECT _rect) {
+	HDC hdcMem = CreateCompatibleDC(hdc);
+	const int nMemDC = ::SaveDC(hdcMem);
+	HBITMAP hbitMem = CreateCompatibleBitmap(hdc, _rect.right - _rect.left, _rect.bottom - _rect.top);
+	HANDLE hOld = ::SelectObject(hdcMem, hbitMem);
+
+	// Draw into hdcMem here
+
+	Graphics theGraphics1(hdcMem);
+	SolidBrush background(Color(255, 255, 255));
+	theGraphics1.FillRectangle(&background, 0, 0, _rect.right - _rect.left, _rect.bottom - _rect.top);
+
 	Pen thePenBlue(Color(255, 0, 0, 255));
 	Pen thePenRed(Color(255, 255, 0, 0));
 	Pen thePenBlack(Color(255, 0, 0, 0));
@@ -37,6 +47,19 @@ void TheEngine::DisplayOnScreen(HDC hdc) {
 		//Draw lines for best fitness so far
 		DrawConnectLines(theGraphics1, thePenRed, _radius, displayOffset, _GA.myCurrentMap, _GA.vec_BestVector);
 	}
+
+	//SelectObject(hdcMem, hdc);
+
+	// Place everything on buffer to main HDC
+	BitBlt(hdc, 0, 0, _rect.right - _rect.left, _rect.bottom - _rect.top, hdcMem, 0, 0, SRCCOPY);
+
+	// Return To previous HANDLE before Drawing begin
+	//SelectObject(hdcMem, hOld);
+
+	RestoreDC(hdcMem, nMemDC);
+	//Clean Up 
+	DeleteObject(hbitMem);
+	DeleteDC(hdcMem);
 }
 
 void TheEngine::DrawButtonControls(Graphics& theGraphics1, SolidBrush& _brush, FontFamily& _fontFamily, Font& _font, int _offsetX, int _offsetY) {
@@ -122,7 +145,7 @@ void TheEngine::DrawConnectLines(Graphics& theGraphics1, Pen& _pen, int _radius,
 
 		std::vector<int> _tempVec;
 		for (int a = 0; a < _GA.iPoints; a++) {
-			_tempVec.emplace_back(_str[a]); /*- 48*/
+			_tempVec.emplace_back(_str[a]); 
 		}
 
 		for (int a = 0; a < _GA.iPoints - 1; a++)
