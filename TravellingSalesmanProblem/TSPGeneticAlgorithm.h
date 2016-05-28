@@ -3,17 +3,16 @@
 #define TSPGENETICALGORITHM_H
 
 struct GeneAl {
-	int iPopulation = 100, iMutateRate = 1, iPoints = 7, iGeneration = 0, iHighGeneration = 0,
-		iScore = 0, iHighScore = 0, iBestIndex = 0,
-		iCurrentBadIndex, iCurrentBadScore,
-		iCurrentBestIndex, iCurrentBestScore;
+	int iPopulation = 100, iMutateRate = 1, iPoints = 7, iGeneration = 0, iBestGeneration = 0,
+		iBestScore = 0, iBestIndex = 0,
+		iThisGenBadScore, iThisGenBestScore;
 	bool bUpdateHScores = false;
 
 	std::map<std::pair<int, int>, int> myCacheScoreMap;
-	std::map<int, std::pair<int, int>> mymap, _BestMap;
-	std::vector<int> myFitnessScores;
-	std::vector<std::vector<int>> _popGroup, _GenePoolGroup;
-	std::vector<int> _temp = { 0,1,2,3,4,5,6 }, _BestString;
+	std::map<int, std::pair<int, int>> myCurrentMap, BestMapSoFar;
+	std::vector<int> vec_MyFitnessScores;
+	std::vector<std::vector<int>> vecv_popGroup, vecv_GenePoolGroup;
+	std::vector<int> vec_temp = { 0,1,2,3,4,5,6 }, vec_BestVector, vec_BestVectorThisGen;
 
 	std::mt19937 mtt;
 
@@ -24,7 +23,7 @@ struct GeneAl {
 
 	2. Get Fitness of each parent
 	3. Create Genepool
-	4. Create Offpsring from genepool
+	4. Create Offpsring from crossovering genepool 
 	5. Mutate Offspring
 	Repeat from step 2 until you decide to stop
 	*/
@@ -55,7 +54,11 @@ struct GeneAl {
 	// Mutate the offspring slightly
 	void SwapMutate(std::vector<int>& myStr, int _length);
 
-	void ShuffleNeighbourMutate(std::vector<int>& myStr, int _length);
+	int VectorFind(std::vector<int> myStr, int _value);
+
+	int VectorFindNot(std::vector<int> myStr1);
+
+	void GreedyCrossover(std::vector<int> v_Father, std::vector<int> v_Mother, std::vector<int>&v_Child);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//Clear data

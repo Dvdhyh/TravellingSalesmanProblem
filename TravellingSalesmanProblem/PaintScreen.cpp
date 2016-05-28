@@ -20,22 +20,22 @@ void TheEngine::DisplayOnScreen(HDC hdc) {
 
 	if (bRandomButtonClicked) {
 		//Current
-		DrawCoordinates(theGraphics1, brush, fontFamily, font, 200, 510, _GA.mymap);
-		DrawScoreboard(theGraphics1, brush, fontFamily, font, 300, 510, _GA.iScore, _GA.iGeneration);
+		DrawCoordinates(theGraphics1, brush, fontFamily, font, 200, 510, _GA.myCurrentMap);
+		DrawScoreboard(theGraphics1, brush, fontFamily, font, 300, 510, _GA.iThisGenBestScore, _GA.iGeneration);
 		DrawCircles(theGraphics1, thePenBlue, _diameter, 0);
 
 		//Best 
-		DrawCoordinates(theGraphics1, brush, fontFamily, font, 500, 510, _GA._BestMap);
-		DrawScoreboard(theGraphics1, brush, fontFamily, font, 600, 510, _GA.iHighScore, _GA.iHighGeneration);
+		DrawCoordinates(theGraphics1, brush, fontFamily, font, 500, 510, _GA.BestMapSoFar);
+		DrawScoreboard(theGraphics1, brush, fontFamily, font, 600, 510, _GA.iBestScore, _GA.iBestGeneration);
 		DrawCircles(theGraphics1, thePenBlue, _diameter, displayOffset);
 	}
 
 	if (bResume) {
 		//Draw lines for best fitness in current generation
-		DrawConnectLines(theGraphics1, thePenRed, _radius, 0, _GA.mymap, _GA._popGroup[_GA.iCurrentBestIndex]);
+		DrawConnectLines(theGraphics1, thePenRed, _radius, 0, _GA.myCurrentMap, _GA.vec_BestVectorThisGen);
 
 		//Draw lines for best fitness so far
-		DrawConnectLines(theGraphics1, thePenRed, _radius, displayOffset, _GA.mymap, _GA._BestString);
+		DrawConnectLines(theGraphics1, thePenRed, _radius, displayOffset, _GA.myCurrentMap, _GA.vec_BestVector);
 	}
 }
 
@@ -114,7 +114,7 @@ void TheEngine::DrawScoreboard(Graphics& theGraphics1, SolidBrush& _brush, FontF
 void TheEngine::DrawCircles(Graphics& theGraphics1, Pen& _pen, int _radius, int _offset) {
 	theGraphics1.DrawLine(&_pen, 410, 10, 410, 410);
 	for (int a = 0; a < _GA.iPoints; a++)
-		theGraphics1.DrawEllipse(&_pen, _GA.mymap[a].first + _offset, _GA.mymap[a].second, _radius, _radius);
+		theGraphics1.DrawEllipse(&_pen, _GA.myCurrentMap[a].first + _offset, _GA.myCurrentMap[a].second, _radius, _radius);
 }
 
 void TheEngine::DrawConnectLines(Graphics& theGraphics1, Pen& _pen, int _radius, int _offset, std::map<int, std::pair<int, int>> _map, std::vector<int>& _str) {

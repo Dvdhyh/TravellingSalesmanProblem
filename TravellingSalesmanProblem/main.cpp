@@ -99,13 +99,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				_Engine._GA.iGeneration++;
 
-				/*WCHAR qwee[10] = { 0 };
-				wsprintf(qwee, L"%i", std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
-				MessageBox(NULL, qwee, L"1", NULL);
-				wsprintf(qwee, L"%i", std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count());
-				MessageBox(NULL, qwee, L"2", NULL);
-				wsprintf(qwee, L"%i", std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count());
-				MessageBox(NULL, qwee, L"3", NULL);*/
+				/*WCHAR qwee[20] = { 0 };
+				wsprintf(qwee, L"%i %i %i", std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count(), 
+				std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count(), 
+				std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count());
+				MessageBox(NULL, qwee, L"Population - Genepool - Offspring", NULL);*/
 			}
 			break;
 		case 9004:  // 1000 ms
@@ -128,7 +126,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_Engine._GA.Clear();
 
 			for (int a = 0; a < _Engine._GA.iPoints; a++)
-				_Engine._GA._temp.emplace_back(a);
+				_Engine._GA.vec_temp.emplace_back(a);
 
 			_Engine._GA.RandomPointSet();
 			_Engine.bRandomButtonClicked = true;
@@ -137,17 +135,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_Engine._GA.bUpdateHScores = false;
 			_Engine.iAppState = Pause;
 
-			if (_Engine._GA.iPopulation == NULL || _Engine._GA.iPopulation < 1) {
+			if (_Engine._GA.iPopulation <= 0) {
 				_Engine.iAppState = NotReady;
-				::MessageBox(NULL, L"Population must be above 1", L"Error", NULL);
+				::MessageBox(NULL, L"Population must be above 1", L"Invalid Value Error", NULL);
 			}
-			if (_Engine._GA.iMutateRate == NULL || _Engine._GA.iMutateRate < 1) {
+			if (_Engine._GA.iMutateRate <= -1) {
 				_Engine.iAppState = NotReady;
-				::MessageBox(NULL, L"Mutation rate must be above 0", L"Error", NULL);
+				::MessageBox(NULL, L"Mutation rate must be 0 or above", L"Invalid Value Error", NULL);
 			}
-			if (_Engine._GA.iPoints == NULL || _Engine._GA.iPoints < 3) {
+			if (_Engine._GA.iPoints <= 2) {
 				_Engine.iAppState = NotReady;
-				::MessageBox(NULL, L"Number of Points must be above 3", L"Error", NULL);
+				::MessageBox(NULL, L"Number of Points must be 3 or above", L"Invalid Value Error", NULL);
 			}
 			break;
 		}

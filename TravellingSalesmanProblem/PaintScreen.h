@@ -28,7 +28,7 @@ struct TheEngine {
 
 	void DrawCircles(Graphics& theGraphics1, Pen& _pen, int _radius, int _offset);
 
-	void DrawConnectLines(Graphics& theGraphics1, Pen& _pen, int _radius, int _offset, std::map<int, std::pair<int, int>> mymap, std::vector<int>& _str);
+	void DrawConnectLines(Graphics& theGraphics1, Pen& _pen, int _radius, int _offset, std::map<int, std::pair<int, int>> myCurrentMap, std::vector<int>& _str);
 };
 
 #endif // !PAINTSCREEN_H
