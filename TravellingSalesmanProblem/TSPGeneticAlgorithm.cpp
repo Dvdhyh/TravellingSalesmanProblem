@@ -35,18 +35,17 @@ int GeneAl::CalcScore(int _a, int _b) {
 	return (int)pow(pow(myCurrentMap[_a].first - myCurrentMap[_b].first, 2) + pow(myCurrentMap[_a].second - myCurrentMap[_b].second, 2), 0.5);
 }
 
-int GeneAl::GetFitness(std::vector<std::vector<int>>& _popG, int _index) {
-	int iScore = 0;
-	std::vector<int> v_tempVector = _popG[_index];
-	int tempScore;
+int GeneAl::GetFitness(std::vector<int> v_pop) {
+	int iScore = 0, tempScore = 0;
+
 	for (int a = 0; a < iPoints - 1; a++) {
 		//Creating cache for Point to point distance
-		if (myCacheScoreMap[{v_tempVector[a], v_tempVector[a + 1] }] == 0) {
-			tempScore = CalcScore(v_tempVector[a], v_tempVector[a + 1]);
-			myCacheScoreMap[{ v_tempVector[a], v_tempVector[a + 1] }] = tempScore;
+		if (myCacheScoreMap[{v_pop[a], v_pop[a + 1] }] == NULL) {
+			tempScore = CalcScore(v_pop[a], v_pop[a + 1]);
+			myCacheScoreMap[{ v_pop[a], v_pop[a + 1] }] = tempScore;
 		}
 		else {
-			tempScore = myCacheScoreMap[{v_tempVector[a], v_tempVector[a + 1]}];
+			tempScore = myCacheScoreMap[{v_pop[a], v_pop[a + 1]}];
 		}
 
 		iScore += tempScore;
@@ -54,7 +53,7 @@ int GeneAl::GetFitness(std::vector<std::vector<int>>& _popG, int _index) {
 
 	if (iScore < iThisGenBestScore) {
 		iThisGenBestScore = iScore;
-		vec_BestVectorThisGen = v_tempVector;
+		vec_BestVectorThisGen = v_pop;
 	}
 
 	if (iScore > iThisGenBadScore) {
@@ -63,14 +62,11 @@ int GeneAl::GetFitness(std::vector<std::vector<int>>& _popG, int _index) {
 
 	if (iScore < iBestScore) {
 		iBestScore = iScore;
-		iBestIndex = _index;
 		iBestGeneration = iGeneration;
-		vec_BestVector = v_tempVector;
+		vec_BestVector = v_pop;
 		BestMapSoFar.clear();
 		for (int a = 0; a < iPoints; a++)
-			BestMapSoFar[a] = { myCurrentMap[v_tempVector[a]].first, myCurrentMap[v_tempVector[a]].second };
-
-		bUpdateHScores = true;
+			BestMapSoFar[a] = { myCurrentMap[v_pop[a]].first, myCurrentMap[v_pop[a]].second };
 	}
 
 	return iScore;
@@ -79,14 +75,11 @@ int GeneAl::GetFitness(std::vector<std::vector<int>>& _popG, int _index) {
 void GeneAl::GetPopFitness() {
 	vec_BestVectorThisGen.clear();
 
-	int _tempCurrentFitness;
 	iThisGenBestScore = 9999999;
 	iThisGenBadScore = 0;
-	for (int a = 0; a < iPopulation; a++) {
-		_tempCurrentFitness = GetFitness(vecv_popGroup, a);
-
-		vec_MyFitnessScores.emplace_back(_tempCurrentFitness);
-	}
+	for (int a = 0; a < iPopulation; a++) 
+		vec_MyFitnessScores.emplace_back(GetFitness(vecv_popGroup[a]));
+	
 }
 
 //////////////////// CREATE A GENEPOOL from population ///////////////////////////////////////
@@ -94,16 +87,16 @@ void GeneAl::GetPopFitness() {
 void GeneAl::CreateGenePool() {
 	vecv_GenePoolGroup.clear();
 
-	int _tempfitnessScore, iPercentage;
+	int _tempfitnessScore;
 	std::vector<int> vecPercent;
 	for (int a = 0; a < iPopulation; a++) {
 
-		iPercentage = iThisGenBadScore - iThisGenBestScore;
-		_tempfitnessScore = iThisGenBadScore - vec_MyFitnessScores[a];// / iPercentage * 100;
+		_tempfitnessScore = iThisGenBadScore - vec_MyFitnessScores[a];
 
-		//Some reason negatives number are appearing. must be 0 or above for discrete_distri
-		if (_tempfitnessScore <= 0)
-			_tempfitnessScore = 0;
+		//Some reason negatives number are appearing. must be 0 or above for discrete_distribution
+		if (_tempfitnessScore <= 0) {
+			_tempfitnessScore = 1;
+		}
 
 		vecPercent.emplace_back(_tempfitnessScore);
 	}
@@ -111,7 +104,7 @@ void GeneAl::CreateGenePool() {
 	std::discrete_distribution<int> randomWeights(vecPercent.begin(), vecPercent.end());
 
 	for (int b = 0; b < iPopulation; b++) {
-		vecv_GenePoolGroup.emplace_back(vecv_popGroup[(int)randomWeights(mtt)]);
+		vecv_GenePoolGroup.emplace_back(vecv_popGroup[randomWeights(mtt)]);
 	}
 }
 
@@ -212,10 +205,10 @@ void GeneAl::GreedyCrossover(std::vector<int> v_Father, std::vector<int> v_Mothe
 
 void GeneAl::CreateOffspring() {
 	vecv_popGroup.clear();
-	int iGenePoolSize = vecv_GenePoolGroup.size();
-	int iRandStr1, iRandStr2;
+	int iGenePoolSize = vecv_GenePoolGroup.size(), iRandStr1, iRandStr2;
 	std::uniform_int_distribution<int> _tempGene(0, iGenePoolSize - 1);
 	std::vector<int> v_Offspring1;
+
 	for (int a = 0; a < iPopulation; a++) {
 
 		iRandStr1 = _tempGene(mtt);

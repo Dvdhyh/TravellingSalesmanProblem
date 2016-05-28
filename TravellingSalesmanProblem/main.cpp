@@ -1,12 +1,12 @@
 #include "AllHeaderFiles.h"
 
 //Just timing how long it takes per cycles
-//#include <chrono>
-//typedef std::chrono::high_resolution_clock Clock;
+#include <chrono>
+typedef std::chrono::high_resolution_clock Clock;
 
+#define TIMERID 9003
 
-
-void func(TheEngine& _Engine) {
+void SetupInitialPop(TheEngine& _Engine) {
 	_Engine._GA.Clear();
 
 	for (int a = 0; a < _Engine._GA.iPoints; a++)
@@ -15,7 +15,6 @@ void func(TheEngine& _Engine) {
 	_Engine._GA.RandomPointSet();
 	_Engine.bSSButtonFirstClicked = false;
 	_Engine.bResume = false;
-	_Engine._GA.bUpdateHScores = false;
 	_Engine.iAppState = Pause;
 
 	if (_Engine._GA.iPopulation <= 0) {
@@ -101,8 +100,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		_Engine.iAppState = NotReady;
 
-		SetTimer(hWnd, 9003, NULL, NULL);
-		SetTimer(hWnd, 9004, 1000, NULL);
+		SetTimer(hWnd, TIMERID, NULL, NULL);
 
 		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
@@ -113,22 +111,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_TIMER: {
 		switch (wParam) {
-		case 9003:
+		case TIMERID:
 			//Perform calculations
 			if (_Engine.iAppState == Active) {
-				//auto t1 = Clock::now();
+				auto t1 = Clock::now();
 
 				_Engine._GA.GetPopFitness();
+				//Takes 10ms
 
-				//auto t2 = Clock::now();
+				auto t2 = Clock::now();
 
 				_Engine._GA.CreateGenePool();
+				// 0 ms
 
-				//auto t3 = Clock::now();
+				auto t3 = Clock::now();
 
 				_Engine._GA.CreateOffspring();
+				// 1 ms
 
-				//auto t4 = Clock::now();
+				auto t4 = Clock::now();
 
 				_Engine._GA.iGeneration++;
 
@@ -137,12 +138,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count(), 
 				std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count());
 				MessageBox(NULL, qwee, L"Population - Genepool - Offspring", NULL);*/
-			}
-			break;
-		case 9004:  // 1000 ms
-			if (_Engine.iAppState == Active) 
-				InvalidateRect(hWnd, NULL, false);
 
+				InvalidateRect(hWnd, NULL, false);
+			}
+			
 			break;
 		default:
 			break;
@@ -154,43 +153,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 		case 'R':{
 			//Clearing all data and setting states to default
-			func(_Engine);
+			SetupInitialPop(_Engine);
 			_Engine.bRandomButtonClicked = true;
 			break;
 		}
 		case 'T':{
 			_Engine._GA.iPopulation--;
-			func(_Engine);
+			SetupInitialPop(_Engine);
 			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'Y':{
 			_Engine._GA.iPopulation++;
-			func(_Engine);
+			SetupInitialPop(_Engine);
 			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'G':{
 			_Engine._GA.iMutateRate--;
-			func(_Engine);
+			SetupInitialPop(_Engine);
 			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'H':{
 			_Engine._GA.iMutateRate++;
-			func(_Engine);
+			SetupInitialPop(_Engine);
 			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'B':{
 			_Engine._GA.iPoints--;
-			func(_Engine);
+			SetupInitialPop(_Engine);
 			_Engine.iAppState = NotReady;
 			break;
 		}
 		case 'N':{
 			_Engine._GA.iPoints++;
-			func(_Engine);
+			SetupInitialPop(_Engine);
 			_Engine.iAppState = NotReady;
 			break;
 		}
@@ -246,7 +245,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		GdiplusShutdown(gdiplusToken);
 		KillTimer(hWnd, 9003);
-		KillTimer(hWnd, 9004);
 		PostQuitMessage(0);
 		break;
 	default:

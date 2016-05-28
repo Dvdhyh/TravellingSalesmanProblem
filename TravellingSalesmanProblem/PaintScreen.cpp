@@ -11,8 +11,8 @@ void TheEngine::DisplayOnScreen(HDC hdc, RECT _rect) {
 	// Draw into hdcMem here
 
 	Graphics theGraphics1(hdcMem);
-	SolidBrush background(Color(255, 255, 255));
-	theGraphics1.FillRectangle(&background, 0, 0, _rect.right - _rect.left, _rect.bottom - _rect.top);
+	SolidBrush backgroundWhite(Color(255, 255, 255));
+	theGraphics1.FillRectangle(&backgroundWhite, 0, 0, _rect.right - _rect.left, _rect.bottom - _rect.top);
 
 	Pen thePenBlue(Color(255, 0, 0, 255));
 	Pen thePenRed(Color(255, 255, 0, 0));
@@ -54,7 +54,7 @@ void TheEngine::DisplayOnScreen(HDC hdc, RECT _rect) {
 	BitBlt(hdc, 0, 0, _rect.right - _rect.left, _rect.bottom - _rect.top, hdcMem, 0, 0, SRCCOPY);
 
 	// Return To previous HANDLE before Drawing begin
-	//SelectObject(hdcMem, hOld);
+	SelectObject(hdcMem, hOld);
 
 	RestoreDC(hdcMem, nMemDC);
 	//Clean Up 

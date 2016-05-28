@@ -3,10 +3,9 @@
 #define TSPGENETICALGORITHM_H
 
 struct GeneAl {
-	int iPopulation = 100, iMutateRate = 1, iPoints = 7, iGeneration = 0, iBestGeneration = 0,
-		iBestScore = 0, iBestIndex = 0,
+	int iPopulation = 100, iMutateRate = 1, iPoints = 7, iGeneration = 0, 
+		iBestGeneration = 0, iBestScore = 0,
 		iThisGenBadScore, iThisGenBestScore;
-	bool bUpdateHScores = false;
 
 	std::map<std::pair<int, int>, int> myCacheScoreMap;
 	std::map<int, std::pair<int, int>> myCurrentMap, BestMapSoFar;
@@ -39,7 +38,7 @@ struct GeneAl {
 	int CalcScore(int _a, int _b);
 
 	//Get fitness
-	int GetFitness(std::vector<std::vector<int>>& _popG, int _index = 0);
+	int GetFitness(std::vector<int> _popG);
 
 	void GetPopFitness();
 
