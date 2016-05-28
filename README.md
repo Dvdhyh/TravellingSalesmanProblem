@@ -1,12 +1,14 @@
 # TravellingSalesmanProblem
 Adding my TSP to Github
 
-Empty Project C++ vs2015
+C++ vs2015 (Maked from Empty Project)
 Visual representation of Current Path and Best Path so far
-Can easily edit number of Cities and Population size
-Mutation Rate edit box doesn't do anything at the moment
+There are 3 integers Values that can be edited.
+The Population size, the Mutation Rate and the number of cities
 
-At the moment, the algorthim doesn't really learn, because
-Crossover method is not implemented yet. 
+Crossover Method uses Greedy Crossover
+
+Mutation function works by randomly swaping two values around 
+Mutation Rate calls Mutation Function  x number of times
 
 
