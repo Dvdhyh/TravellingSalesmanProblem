@@ -152,20 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllHeaderFiles.h" />
-    <ClInclude Include="GUI.h" />
-    <ClInclude Include="guibuttoncheck.h" />
-    <ClInclude Include="guibuttongroupbox.h" />
-    <ClInclude Include="guibuttonpush.h" />
-    <ClInclude Include="guibuttonradio.h" />
-    <ClInclude Include="guicombobox.h" />
-    <ClInclude Include="GUICommon.h" />
-    <ClInclude Include="GUIEdit.h" />
-    <ClInclude Include="GUIListbox.h" />
-    <ClInclude Include="GUIListview.h" />
-    <ClInclude Include="GUIScrollbar.h" />
-    <ClInclude Include="GUIStatusbar.h" />
-    <ClInclude Include="guitooltips.h" />
-    <ClInclude Include="GUITrackbar.h" />
     <ClInclude Include="PaintScreen.h" />
     <ClInclude Include="TSPGeneticAlgorithm.h" />
   </ItemGroup>

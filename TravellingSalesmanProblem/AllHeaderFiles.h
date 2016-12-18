@@ -18,8 +18,6 @@
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
-#include "GUI.h"
-
 #include "TSPGeneticAlgorithm.h"
 #include "PaintScreen.h"
 
