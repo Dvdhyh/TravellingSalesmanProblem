@@ -19,7 +19,7 @@
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
-#include "C:\Users\DavidHuynh\Documents\Visual Studio 2015\MyHeaders\GUI.h"
+#include "GUI.h"
 
 #include "TSPGeneticAlgorithm.h"
 #include "PaintScreen.h"
